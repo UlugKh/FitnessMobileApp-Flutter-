@@ -1,10 +1,11 @@
 import 'package:fitness/models/category_model.dart';
 import 'package:fitness/models/diet_models.dart';
+import 'package:fitness/models/popular_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -13,7 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<CategoryModel> categories = [];
   List<DietModel> diets = [];
-
+  List<PopularDietsModel> popularDiets = PopularDietsModel.getPopularDiets();
 
   void _getCategories() {
     categories = CategoryModel.getCategories();
@@ -23,9 +24,14 @@ class _HomePageState extends State<HomePage> {
     diets = DietModel.getDiets();
   }
 
+  void _getPopularDiets() {
+    popularDiets = PopularDietsModel.popularDiets;
+  }
+
   void _getInitialInfo() {
     _getCategories();
     _getDiets();
+    _getPopularDiets();
   }
 
   @override
@@ -34,14 +40,88 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: appBar(),
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
           _searchField(),
           SizedBox(height: 40,),
           _categoriesSection(),
           SizedBox(height: 50,),
-          _dietSection()
+          _dietSection(),
+          SizedBox(height: 40,),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Text(
+                  'Popular',
+                  style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  color: Colors.black,
+                  )
+                )
+              )
+            ]
+          ),
+          SizedBox(height: 40,),
+          ListView.separated(
+            padding : EdgeInsets.only(left: 20, right: 20),
+            shrinkWrap: true,
+            separatorBuilder: (context, index) => SizedBox(height: 25,),
+            itemCount: popularDiets.length,
+            itemBuilder: (context, index) {
+              return Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: popularDiets[index].boxIsSelected? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: popularDiets[index].boxIsSelected? [
+                    BoxShadow(
+                      color: Color(0xff1D1617).withOpacity(0.07),
+                      offset: Offset(0, 10),
+                      blurRadius: 40,
+                      spreadRadius: 0,
+                    )
+                  ] : []
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SvgPicture.asset(popularDiets[index].iconPath, height: 65, width: 65,),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          popularDiets[index].name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: Colors.black,
+                          )
+                        ),
+                        Text(
+                          popularDiets[index].level + ' | ' + popularDiets[index].duration + ' | ' + popularDiets[index].calorie,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Color(0xff7B6F72),
+                          )
+                        )
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Action when the button is tapped
+                      },
+                      child: SvgPicture.asset('assets/icons/button.svg', height: 30, width: 30,)
+                    ),
+                  ],
+                ),   
+              );
+            }
+            )
         ],
       )
     );
