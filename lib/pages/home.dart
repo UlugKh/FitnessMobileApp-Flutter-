@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
           _searchField(),
           SizedBox(height: 40,),
           _categoriesSection(),
-          SizedBox(height: 40,),
+          SizedBox(height: 50,),
           _dietSection()
         ],
       )
@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> {
 
   Column _dietSection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 20.0),
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                 )
               ),
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 20,),
             Container(
               height: 240,
               child: ListView.separated(
